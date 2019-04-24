@@ -20,5 +20,5 @@ if [ "${shortname}" == "ts3" ]; then
 		status=0
 	fi
 else
-	status=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | grep -Ecx "^${servicename}")
+	status=$(tmux ${tmuxargs} list-sessions -F "#{session_name}" 2>/dev/null | grep -Ecx "^${servicename}")
 fi

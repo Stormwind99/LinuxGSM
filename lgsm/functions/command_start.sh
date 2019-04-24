@@ -86,7 +86,7 @@ fn_start_tmux(){
 	# Create lockfile
 	date > "${rootdir}/${lockselfname}"
 	cd "${executabledir}"
-	tmux new-session -d -x "${sessionwidth}" -y "${sessionheight}" -s "${servicename}" "${executable} ${parms}" 2> "${lgsmlogdir}/.${servicename}-tmux-error.tmp"
+	tmux ${tmuxargs} new-session -d -x "${sessionwidth}" -y "${sessionheight}" -P -F "#{pane_pid}" -s "${servicename}" "${executable} ${parms}" 2> "${lgsmlogdir}/.${servicename}-tmux-error.tmp" > "${pidselfname}"
 
 	# Create logfile
 	touch "${consolelog}"
@@ -98,7 +98,7 @@ fn_start_tmux(){
 		fn_script_log "Tmux version: master (user compiled)"
 		echo "Tmux version: master (user compiled)" >> "${consolelog}"
 		if [ "${consolelogging}" == "on" ]||[ -z "${consolelogging}" ]; then
-			tmux pipe-pane -o -t "${servicename}" "exec cat >> '${consolelog}'"
+			tmux ${tmuxargs} pipe-pane -o -t "${servicename}" "exec cat >> '${consolelog}'"
 		fi
 	elif [ -n "${tmuxversion}" ]; then
 		# Get the digit version of tmux
@@ -116,7 +116,7 @@ fn_start_tmux(){
 			Currently installed: $(tmux -V)" > "${consolelog}"
 		# Console logging enable or not set
 		elif [ "${consolelogging}" == "on" ]||[ -z "${consolelogging}" ]; then
-			tmux pipe-pane -o -t "${servicename}" "exec cat >> '${consolelog}'"
+			tmux ${tmuxargs} pipe-pane -o -t "${servicename}" "exec cat >> '${consolelog}'"
 		fi
 	else
 		echo "Unable to detect tmux version" >> "${consolelog}"
@@ -142,7 +142,7 @@ sleep 0.5
 			echo ""
 			echo "Command"
 			echo "================================="
-			echo "tmux new-session -d -s \"${servicename}\" \"${executable} ${parms}\"" | tee -a "${lgsmlog}"
+			echo "tmux ${tmuxargs} new-session -d -s \"${servicename}\" \"${executable} ${parms}\"" | tee -a "${lgsmlog}"
 			echo ""
 			echo "Error"
 			echo "================================="
